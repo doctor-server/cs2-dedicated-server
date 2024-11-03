@@ -29,6 +29,9 @@ jobs:
           remove-haskell: 'true'
           remove-codeql: 'true'
           build-mount-path: '/var/lib/docker/'
+
+      - name: Restart docker
+        run: sudo service docker restart
           
       - name: Checkout
         uses: actions/checkout@v4
