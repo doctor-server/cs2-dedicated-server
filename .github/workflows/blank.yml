@@ -24,6 +24,9 @@ jobs:
         tag: [slim]
     
     steps:
+      - name: ls -l /var/lib/docker
+        run: ls -l /var/lib/docker
+    
       - name: Maximize build space
         uses: easimon/maximize-build-space@master
         with:
@@ -41,6 +44,9 @@ jobs:
           
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: ls -l /var/lib/docker
+        run: ls -l /var/lib/docker
 
       - name: Docker info
         run: docker info
