@@ -48,8 +48,8 @@ jobs:
           remove-codeql: 'true'
           remove-docker-images: 'true'
 
-      - name: sudo mv /var/lib/docker.bk /var/lib/docker
-        run: sudo mv /var/lib/docker.bk /var/lib/docker
+      - name: sudo mv /var/lib/docker.bk/* /var/lib/docker
+        run: sudo mv /var/lib/docker.bk/* /var/lib/docker
 
       # - name: Restart docker
       #   run: sudo service docker restart
