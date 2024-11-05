@@ -26,7 +26,16 @@ jobs:
     steps:
       - name: sudo ls -l /var/lib/docker
         run: sudo ls -l /var/lib/docker
-    
+
+      - name: Copy the contents of /var/lib/docker to a temporary location.
+        run: sudo systemctl stop docker
+
+      - name: Copy the contents of /var/lib/docker to a temporary location.
+        run: cp -au /var/lib/docker /var/lib/docker.bk
+
+      - name: sudo rm -rf /var/lib/docker
+        run: sudo rm -rf /var/lib/docker
+
       - name: Maximize build space
         uses: easimon/maximize-build-space@master
         with:
@@ -39,8 +48,17 @@ jobs:
           remove-codeql: 'true'
           remove-docker-images: 'true'
 
-      - name: Restart docker
-        run: sudo service docker restart
+      - name: Copy the contents of /var/lib/docker to a temporary location.
+        run: cp -au /var/lib/docker.bk /var/lib/docker
+
+      - name: sudo mv /var/lib/docker.bk /var/lib/docker
+        run: sudo mv /var/lib/docker.bk /var/lib/docker
+
+      # - name: Restart docker
+      #   run: sudo service docker restart
+
+      - name: Start docker
+        run: sudo systemctl start docker
           
       - name: Checkout
         uses: actions/checkout@v4
