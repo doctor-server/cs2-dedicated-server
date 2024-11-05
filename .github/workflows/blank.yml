@@ -27,9 +27,9 @@ jobs:
       - name: Maximize build space
         uses: easimon/maximize-build-space@master
         with:
-          root-reserve-mb: 4096
-          temp-reserve-mb: 2048
-          build-mount-path: '/var/lib/'
+          root-reserve-mb: 1024
+          temp-reserve-mb: 20480
+          build-mount-path: '/'
           remove-dotnet: 'true'
           remove-android: 'true'
           remove-haskell: 'true'
