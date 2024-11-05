@@ -31,7 +31,7 @@ jobs:
         run: sudo systemctl stop docker
 
       - name: Copy the contents of /var/lib/docker to a temporary location.
-        run: cp -au /var/lib/docker /var/lib/docker.bk
+        run: sudo cp -au /var/lib/docker /var/lib/docker.bk
 
       - name: sudo rm -rf /var/lib/docker
         run: sudo rm -rf /var/lib/docker
@@ -47,9 +47,6 @@ jobs:
           remove-haskell: 'true'
           remove-codeql: 'true'
           remove-docker-images: 'true'
-
-      - name: Copy the contents of /var/lib/docker to a temporary location.
-        run: cp -au /var/lib/docker.bk /var/lib/docker
 
       - name: sudo mv /var/lib/docker.bk /var/lib/docker
         run: sudo mv /var/lib/docker.bk /var/lib/docker
