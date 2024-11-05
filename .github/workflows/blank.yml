@@ -30,12 +30,6 @@ jobs:
       - name: Copy the contents of /var/lib/docker to a temporary location.
         run: sudo systemctl stop docker
 
-      - name: Copy the contents of /var/lib/docker to a temporary location.
-        run: sudo cp -au /var/lib/docker /var/lib/docker.bk
-
-      - name: sudo rm -rf /var/lib/docker
-        run: sudo rm -rf /var/lib/docker
-
       - name: Maximize build space
         uses: easimon/maximize-build-space@master
         with:
@@ -48,14 +42,8 @@ jobs:
           remove-codeql: 'true'
           remove-docker-images: 'true'
 
-      - name: sudo mv /var/lib/docker.bk/* /var/lib/docker
-        run: sudo mv /var/lib/docker.bk/* /var/lib/docker
-
-      # - name: Restart docker
-      #   run: sudo service docker restart
-
-      - name: Start docker
-        run: sudo systemctl start docker
+      - name: Restart docker
+        run: sudo service docker restart
           
       - name: Checkout
         uses: actions/checkout@v4
@@ -94,47 +82,47 @@ jobs:
       - name: Docker info
         run: docker info
 
-      # - name: Check if tag exists
-      #   if: github.event_name != 'workflow_dispatch'
-      #   id: tag-exists
-      #   run: |
-      #     if docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}; then
-      #       echo "TAG_EXISTS=true" >> $GITHUB_ENV
-      #     fi
+      - name: Check if tag exists
+        if: github.event_name != 'workflow_dispatch'
+        id: tag-exists
+        run: |
+          if docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}; then
+            echo "TAG_EXISTS=true" >> $GITHUB_ENV
+          fi
 
-      # - name: Log in to the Container registry
-      #   if: env.TAG_EXISTS == 'false' || github.event_name == 'workflow_dispatch'
-      #   uses: docker/login-action@v3
-      #   with:
-      #     registry: ${{ env.REGISTRY }}
-      #     username: ${{ github.actor }}
-      #     password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Log in to the Container registry
+        if: env.TAG_EXISTS == 'false' || github.event_name == 'workflow_dispatch'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Extract metadata (tags, labels) for Docker
-      #   if: env.TAG_EXISTS == 'false' || github.event_name == 'workflow_dispatch'
-      #   id: meta
-      #   uses: docker/metadata-action@v5
-      #   with:
-      #     images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-      #     tags: |
-      #       type=raw,value=${{ matrix.tag }}
-      #       type=raw,value=${{ env.TAG }}
+      - name: Extract metadata (tags, labels) for Docker
+        if: env.TAG_EXISTS == 'false' || github.event_name == 'workflow_dispatch'
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ matrix.tag }}
+            type=raw,value=${{ env.TAG }}
 
-      # - name: Build
-      #   run: |
-      #     echo "Free space:"
-      #     df -h
+      - name: Build
+        run: |
+          echo "Free space:"
+          df -h
 
-      # - name: Push Docker image
-      #   if: env.TAG_EXISTS == 'false' || github.event_name == 'workflow_dispatch'
-      #   uses: docker/build-push-action@v6
-      #   with:
-      #     context: .
-      #     push: true
-      #     provenance: false
-      #     tags: ${{ steps.meta.outputs.tags }}
-      #     labels: ${{ steps.meta.outputs.labels }}
-      #     annotations: ${{ steps.meta.outputs.annotations }}
-      #     build-args: |
-      #       TAG=${{ matrix.tag }}
-      #       REMOTE_BUILDID=${{ env.REMOTE_BUILDID }}
+      - name: Push Docker image
+        if: env.TAG_EXISTS == 'false' || github.event_name == 'workflow_dispatch'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          provenance: false
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
+          build-args: |
+            TAG=${{ matrix.tag }}
+            REMOTE_BUILDID=${{ env.REMOTE_BUILDID }}
