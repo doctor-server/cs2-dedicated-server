@@ -27,7 +27,7 @@ jobs:
       - name: Maximize build space
         uses: easimon/maximize-build-space@master
         with:
-          root-reserve-mb: 2048
+          root-reserve-mb: 40960
           temp-reserve-mb: 2048
           build-mount-path: '/var/lib/docker/'
           remove-dotnet: 'true'
