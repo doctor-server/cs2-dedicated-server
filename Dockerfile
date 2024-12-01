@@ -8,11 +8,6 @@ ENV APP_ID=730
 COPY script.txt ${HOME}/script.txt
 RUN steamcmd +runscript ${HOME}/script.txt
 
-# Set the remote build ID as an argument and validate it using the script
-ARG REMOTE_BUILDID
-COPY validate_buildid.sh ${HOME}/validate_buildid.sh
-RUN chmod +x ${HOME}/validate_buildid.sh && ${HOME}/validate_buildid.sh ${APP_ID} ${REMOTE_BUILDID}
-
 
 # https://github.com/doctor-server/steamcmd
 FROM doctorserver/steamcmd:latest
