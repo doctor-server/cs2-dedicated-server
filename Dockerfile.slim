@@ -13,6 +13,9 @@ ARG REMOTE_BUILDID
 COPY validate_buildid.sh ${HOME}/validate_buildid.sh
 RUN chmod +x ${HOME}/validate_buildid.sh && ${HOME}/validate_buildid.sh ${APP_ID} ${REMOTE_BUILDID}
 
+# Remove all map files if the 'slim' tag is specified
+RUN rm -rf ${HOME}/serverfiles/game/csgo/maps/*
+
 
 # https://github.com/doctor-server/steamcmd
 FROM doctorserver/steamcmd:latest
