@@ -4,9 +4,27 @@ FROM doctorserver/steamcmd:latest AS builder
 # Set environment variables
 ENV APP_ID=730
 
+# Create the update script
+RUN cat <<EOF > ${HOME}/script.txt
+@ShutdownOnFailedCommand 1
+@NoPromptForPassword 1
+force_install_dir ${HOME}/serverfiles
+login anonymous
+app_update ${APP_ID} validate
+quit
+EOF
+
 # Run the SteamCMD script
-COPY script.txt ${HOME}/script.txt
 RUN steamcmd +runscript ${HOME}/script.txt
+
+# Set the remote build ID as an argument and validate it using the script
+ARG REMOTE_BUILDID
+COPY validate_buildid.sh ${HOME}/validate_buildid.sh
+RUN chmod +x ${HOME}/validate_buildid.sh && ${HOME}/validate_buildid.sh ${APP_ID} ${REMOTE_BUILDID}
+
+# Remove all map files if the 'slim' tag is specified
+ARG TAG
+RUN if [ "${TAG}" = "slim" ]; then rm -rf ${HOME}/serverfiles/tf/maps/*; fi
 
 
 # https://github.com/doctor-server/steamcmd
