@@ -24,9 +24,6 @@ jobs:
         tag: [slim]
 
     steps:
-      - name: sudo ls -l /var/lib/docker
-        run: sudo ls -l /var/lib/docker
-
       - name: Copy the contents of /var/lib/docker to a temporary location.
         run: sudo systemctl stop docker
 
@@ -42,6 +39,33 @@ jobs:
           remove-codeql: 'true'
           remove-docker-images: 'true'
 
+      - name: Free space
+        run: |
+          echo "Free space:"
+          df -h
+
+      - name: Removes large packages. (frees ~5 GB)
+        run: |
+          sudo apt-get purge -y \
+            '^llvm-.*' \
+            'php.*' \
+            '^mongodb-.*' \
+            '^mysql-.*' \
+            azure-cli \
+            google-cloud-sdk \
+            google-chrome-stable \
+            firefox \
+            powershell \
+            microsoft-edge-stable \
+            mono-devel
+          sudo apt-get autoremove -y
+          sudo apt-get clean
+
+      - name: Free space
+        run: |
+          echo "Free space:"
+          df -h
+
       - name: Restart docker
         run: sudo service docker restart
 
@@ -50,14 +74,6 @@ jobs:
 
       - name: sudo ls -l /var/lib/docker
         run: sudo ls -l /var/lib/docker
-
-      - name: Docker info
-        run: docker info
-
-      - name: Build
-        run: |
-          echo "Free space:"
-          df -h
 
       - name: Fetch depot JSON file
         run: |
